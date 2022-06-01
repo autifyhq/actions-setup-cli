@@ -1,0 +1,10 @@
+name: 'Setup Autify Command Line Interface (CLI)'
+description: 'Install Autify CLI and add it to PATH'
+author: 'Autify Inc.'
+inputs:
+  version:
+    required: false
+    description: 'Install version'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
