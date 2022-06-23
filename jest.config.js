@@ -5,5 +5,8 @@ module.exports = {
   transform: {
     '^.+\\.ts$': 'ts-jest'
   },
+  setupFilesAfterEnv: [
+    '<rootDir>/setup-jest.cjs'
+  ],
   verbose: true
 }
