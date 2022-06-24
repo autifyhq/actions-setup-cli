@@ -6,7 +6,7 @@
 
 This action setup [Autify Command Line Interface (CLI)](https://github.com/autifyhq/autify-cli) so that your workflow can run `autify` command.
 
-The installed directly will be added to `PATH` environment variable of your workflow.
+The installed directory will be added to `PATH` environment variable of your workflow.
 
 ## Usage
 
@@ -14,7 +14,7 @@ The installed directly will be added to `PATH` environment variable of your work
 - uses: autifyhq/actions-setup-cli@v1
   with:
     # Optional. If specified, the action installs the specific version of Autify CLI.
-    # Default: The latest version of the stable channel will be installed.
+    # Default: The latest version of the stable channel will be installed. (Recommended)
     version: ''
 
 # Then, `autify` is available
