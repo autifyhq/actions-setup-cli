@@ -10,7 +10,7 @@ const urlFromIndex = async (
   target: string,
   version: string
 ): Promise<string> => {
-  const key = `${folder}/versions/autify-${target}-tar-gz.json`
+  const key = `${folder}/versions/autify-${target.replace(/\./g, '-')}.json`
   const indexUrl = `https://${bucket}.s3.amazonaws.com/${key}`
   const indexFile = await tc.downloadTool(indexUrl)
   const versions = JSON.parse(
@@ -22,11 +22,11 @@ const urlFromIndex = async (
 }
 
 const urlFromStable = (target: string): string => {
-  const key = `${folder}/channels/stable/autify-${target}.tar.gz`
+  const key = `${folder}/channels/stable/autify-${target}`
   return `https://${bucket}.s3.amazonaws.com/${key}`
 }
 
-export const downloadAndExtract = async (
+export const download = async (
   target: string,
   version?: string
 ): Promise<string> => {
@@ -36,6 +36,5 @@ export const downloadAndExtract = async (
   } else {
     url = urlFromStable(target)
   }
-  const downloadPath = await tc.downloadTool(url)
-  return tc.extractTar(downloadPath)
+  return tc.downloadTool(url)
 }

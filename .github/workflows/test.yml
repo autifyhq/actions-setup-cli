@@ -29,3 +29,4 @@ jobs:
         with:
           version: ${{ matrix.version }}
       - run: autify --version
+      - run: echo token | autify web auth login

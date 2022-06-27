@@ -39,13 +39,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.downloadAndExtract = void 0;
+exports.download = void 0;
 const tc = __importStar(__nccwpck_require__(784));
 const promises_1 = __nccwpck_require__(977);
 const bucket = 'autify-cli-assets';
 const folder = 'autify-cli';
 const urlFromIndex = (target, version) => __awaiter(void 0, void 0, void 0, function* () {
-    const key = `${folder}/versions/autify-${target}-tar-gz.json`;
+    const key = `${folder}/versions/autify-${target.replace(/\./g, '-')}.json`;
     const indexUrl = `https://${bucket}.s3.amazonaws.com/${key}`;
     const indexFile = yield tc.downloadTool(indexUrl);
     const versions = JSON.parse((yield (0, promises_1.readFile)(indexFile)).toString());
@@ -55,10 +55,10 @@ const urlFromIndex = (target, version) => __awaiter(void 0, void 0, void 0, func
     return url;
 });
 const urlFromStable = (target) => {
-    const key = `${folder}/channels/stable/autify-${target}.tar.gz`;
+    const key = `${folder}/channels/stable/autify-${target}`;
     return `https://${bucket}.s3.amazonaws.com/${key}`;
 };
-const downloadAndExtract = (target, version) => __awaiter(void 0, void 0, void 0, function* () {
+const download = (target, version) => __awaiter(void 0, void 0, void 0, function* () {
     let url;
     if (version) {
         url = yield urlFromIndex(target, version);
@@ -66,10 +66,9 @@ const downloadAndExtract = (target, version) => __awaiter(void 0, void 0, void 0
     else {
         url = urlFromStable(target);
     }
-    const downloadPath = yield tc.downloadTool(url);
-    return tc.extractTar(downloadPath);
+    return tc.downloadTool(url);
 });
-exports.downloadAndExtract = downloadAndExtract;
+exports.download = download;
 
 
 /***/ }),
@@ -117,9 +116,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.install = void 0;
 const core = __importStar(__nccwpck_require__(186));
+const tc = __importStar(__nccwpck_require__(784));
 const node_path_1 = __importDefault(__nccwpck_require__(411));
+const node_process_1 = __nccwpck_require__(742);
 const promises_1 = __nccwpck_require__(292);
-const install = (extractPath) => __awaiter(void 0, void 0, void 0, function* () {
+const node_os_1 = __nccwpck_require__(612);
+const node_child_process_1 = __nccwpck_require__(718);
+const node_fs_1 = __nccwpck_require__(561);
+const installTarGz = (downloadPath) => __awaiter(void 0, void 0, void 0, function* () {
+    const extractPath = yield tc.extractTar(downloadPath);
     const autifyCommand = 'autify';
     const autifyPath = node_path_1.default.join(extractPath, 'autify', 'bin', autifyCommand);
     const installBinPath = node_path_1.default.join(extractPath, 'bin');
@@ -127,6 +132,22 @@ const install = (extractPath) => __awaiter(void 0, void 0, void 0, function* () 
     yield (0, promises_1.mkdir)(installBinPath);
     yield (0, promises_1.symlink)(autifyPath, installAutifyPath);
     core.addPath(installBinPath);
+});
+const installExe = (downloadPath) => __awaiter(void 0, void 0, void 0, function* () {
+    const exePath = `${downloadPath}.exe`;
+    (0, node_fs_1.renameSync)(downloadPath, exePath);
+    const installPath = node_path_1.default.join((0, node_os_1.homedir)(), 'autify');
+    (0, node_child_process_1.execSync)(`${exePath} /S /D=${installPath}`);
+    const installBinPath = node_path_1.default.join(installPath, 'bin');
+    core.addPath(installBinPath);
+});
+const install = (downloadPath) => __awaiter(void 0, void 0, void 0, function* () {
+    if (node_process_1.platform === 'linux')
+        return installTarGz(downloadPath);
+    if (node_process_1.platform === 'darwin')
+        return installTarGz(downloadPath);
+    if (node_process_1.platform === 'win32')
+        return installExe(downloadPath);
 });
 exports.install = install;
 
@@ -180,8 +201,8 @@ function run() {
         try {
             const version = core.getInput('version');
             const target = (0, target_util_1.getTarget)();
-            const extractPath = yield (0, download_util_1.downloadAndExtract)(target, version);
-            (0, install_util_1.install)(extractPath);
+            const downloadPath = yield (0, download_util_1.download)(target, version);
+            (0, install_util_1.install)(downloadPath);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -205,23 +226,23 @@ const getTarget = () => {
     switch (node_process_1.platform) {
         case 'linux': {
             if (node_process_1.arch === 'x64')
-                return 'linux-x64';
+                return 'linux-x64.tar.gz';
             if (node_process_1.arch === 'arm' || node_process_1.arch === 'arm64')
-                return 'linux-arm';
+                return 'linux-arm.tar.gz';
             break;
         }
         case 'darwin': {
             if (node_process_1.arch === 'x64')
-                return 'darwin-x64';
+                return 'darwin-x64.tar.gz';
             if (node_process_1.arch === 'arm64')
-                return 'darwin-arm64';
+                return 'darwin-arm64.tar.gz';
             break;
         }
         case 'win32': {
             if (node_process_1.arch === 'x64')
-                return 'win32-x64';
+                return 'x64.exe';
             if (node_process_1.arch === 'ia32')
-                return 'win32-x86';
+                return 'x86.exe';
             break;
         }
     }
@@ -6173,11 +6194,35 @@ module.exports = require("net");
 
 /***/ }),
 
+/***/ 718:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:child_process");
+
+/***/ }),
+
+/***/ 561:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:fs");
+
+/***/ }),
+
 /***/ 977:
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("node:fs/promises");
+
+/***/ }),
+
+/***/ 612:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:os");
 
 /***/ }),
 
