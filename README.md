@@ -13,7 +13,7 @@ The installed directory will be added to `PATH` environment variable of your wor
 ```yaml
 - uses: autifyhq/actions-setup-cli@v2
   # Optionally specify the installer script which installs `autify` at `./autify/bin`.
-  # If omitted, the default installer will be used. (Currently stable channel)
+  # If omitted, the default installer will be used. (Currently beta channel)
   shell-installer-url: "https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/beta/install-cicd.bash"
 
 # Then, `autify` is available
