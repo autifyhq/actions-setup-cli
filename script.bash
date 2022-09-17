@@ -2,17 +2,17 @@
 set -xe
 
 : "${INPUT_SHELL_INSTALLER_URL:?"Provide the installer URL"}"
+: "${INPUT_USE_CACHE:?"Provide true or false"}"
+: "${INPUT_INSTALL_CLI_INTEGRATION_TEST:?"Provide true or false"}"
 
-TEMP_DIR=$(mktemp -d)
+if [ "$INPUT_USE_CACHE" == "true" ]; then
+  export AUTIFY_CLI_INSTALL_USE_CACHE=1
+fi
+if [ "$INPUT_INSTALL_CLI_INTEGRATION_TEST" == "true" ]; then
+  export AUTIFY_CLI_INTEGRATION_TEST_INSTALL=1
+fi
 
-cd "$TEMP_DIR"
+cd "$RUNNER_TEMP"
 curl -L "$INPUT_SHELL_INSTALLER_URL" | bash -xe
 
-BIN_DIR="$TEMP_DIR/autify/bin"
-"$BIN_DIR"/autify --version
-
-if [ "$(command -v cygpath)" ]; then
-  cygpath -w "$BIN_DIR" >> "$GITHUB_PATH"
-else
-  echo "$BIN_DIR" >> "$GITHUB_PATH"
-fi
+cat "$RUNNER_TEMP/autify/path" >> "$GITHUB_PATH"
