@@ -57,8 +57,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./
-        with:
-          install-cli-integration-test: 'true'
+        env:
+          AUTIFY_CLI_INTEGRATION_TEST_INSTALL: 1
       - run: |
           echo token | autify web auth login
           echo token | autify mobile auth login
@@ -66,14 +66,3 @@ jobs:
         env:
           AUTIFY_CONNECT_CLIENT_MODE: fake
       - run: autify-cli-integration-test
-
-  test-use-cache:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./
-        with:
-          use-cache: 'true'
-      - uses: ./
-        with:
-          use-cache: 'true'
