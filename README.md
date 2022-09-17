@@ -27,14 +27,6 @@ shell-installer-url:
   description: "Shell installer URL"
   # TODO: Use stable
   default: "https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/beta/install-cicd.bash"
-use-cache:
-  required: false
-  description: "Use cached CLI installed by previous steps if existing."
-  default: "false"
-install-cli-integration-test:
-  required: false
-  description: "Install autify-cli-integration-test package as well."
-  default: "false"
 ```
 
 ### v1
