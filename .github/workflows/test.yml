@@ -27,7 +27,6 @@ jobs:
       - uses: ./
       - run: autify --version
       - run: echo token | autify web auth login
-      - run: autify connect client install
 
   test-specific:
     strategy:
@@ -45,4 +44,36 @@ jobs:
           shell-installer-url: "https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/beta/install-cicd.bash"
       - run: autify --version | grep beta
       - run: echo token | autify web auth login
-      - run: autify connect client install
+
+  test-integration-test:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        with:
+          install-cli-integration-test: 'true'
+      - run: |
+          echo token | autify web auth login
+          echo token | autify mobile auth login
+          autify connect client install
+        env:
+          AUTIFY_CONNECT_CLIENT_MODE: fake
+      - run: autify-cli-integration-test
+
+  test-use-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        with:
+          use-cache: 'true'
+      - uses: ./
+        with:
+          use-cache: 'true'
