@@ -12,11 +12,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - if: ${{ inputs.install-cli-integration-test == 'true' }}
-      uses: actions/setup-node@v3
     - run: $GITHUB_ACTION_PATH/script.bash
       shell: bash
       env:
         INPUT_SHELL_INSTALLER_URL: ${{ inputs.shell-installer-url }}
-    - run: autify --version
-      shell: bash
