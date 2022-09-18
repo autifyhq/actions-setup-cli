@@ -7,4 +7,11 @@ cd "$RUNNER_TEMP"
 export AUTIFY_CLI_INSTALL_USE_CACHE=1
 curl -L "$INPUT_SHELL_INSTALLER_URL" | bash -xe
 
-cat "$RUNNER_TEMP/autify/path" >> "$GITHUB_PATH"
+
+while IFS= read -r line; do
+  if [ "$(command -v cygpath)" ]; then
+    cygpath -w "$line" >> "$GITHUB_PATH"
+  else
+    echo "$line" >> "$GITHUB_PATH"
+  fi
+done < "./autify/path"
