@@ -25,8 +25,7 @@ Most of the case, no options are needed. When you need more customization, here 
 shell-installer-url:
   required: false
   description: "Shell installer URL"
-  # TODO: Use stable
-  default: "https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/beta/install-cicd.bash"
+  default: "https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash"
 ```
 
 ### v1
