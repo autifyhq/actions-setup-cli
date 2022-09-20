@@ -26,11 +26,11 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./
       - run: |
-          autify --version
+          autify --version | grep -v beta
           echo token | autify web auth login
         shell: bash
       - run: |
-          autify --version
+          autify --version | grep -v beta
           echo token | autify web auth login
         shell: pwsh
 
@@ -49,11 +49,11 @@ jobs:
         with:
           shell-installer-url: "https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/beta/install-cicd.bash"
       - run: |
-          autify --version
+          autify --version | grep beta
           echo token | autify web auth login
         shell: bash
       - run: |
-          autify --version
+          autify --version | grep beta
           echo token | autify web auth login
         shell: pwsh
 

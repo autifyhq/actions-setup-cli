@@ -6,8 +6,7 @@ inputs:
   shell-installer-url:
     required: false
     description: 'Shell installer URL'
-    # TODO: Use stable
-    default: "https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/beta/install-cicd.bash"
+    default: "https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash"
 
 runs:
   using: 'composite'
