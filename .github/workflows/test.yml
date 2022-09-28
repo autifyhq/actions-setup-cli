@@ -57,25 +57,7 @@ jobs:
           echo token | autify web auth login
         shell: pwsh
 
-  test-integration-test:
-    strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - uses: ./
-        env:
-          AUTIFY_CLI_INTEGRATION_TEST_INSTALL: 1
-      - run: |
-          echo token | autify web auth login
-          echo token | autify mobile auth login
-          autify connect client install
-        env:
-          AUTIFY_CONNECT_CLIENT_MODE: fake
-      - run: autify-cli-integration-test
+  integration-test:
+    uses: ./.github/workflows/integration-test.yml
+    with:
+      shell-installer-url: https://autify-cli-assets.s3.amazonaws.com/autify-cli/channels/stable/install-cicd.bash
