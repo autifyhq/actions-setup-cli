@@ -1,0 +1,34 @@
+name: 'Integration test'
+
+on:
+  workflow_call:
+    inputs:
+      shell-installer-url:
+        type: string
+        required: true
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - uses: ./
+        with:
+          shell-installer-url: ${{ inputs.shell-installer-url }}
+        env:
+          AUTIFY_CLI_INTEGRATION_TEST_INSTALL: 1
+      - run: |
+          echo token | autify web auth login
+          echo token | autify mobile auth login
+          autify connect client install
+        env:
+          AUTIFY_CONNECT_CLIENT_MODE: fake
+      - run: autify-cli-integration-test
