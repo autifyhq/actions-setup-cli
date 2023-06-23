@@ -10,6 +10,7 @@ curl -L "$INPUT_SHELL_INSTALLER_URL" | bash -xe
 while IFS= read -r line; do
   if [ "$(command -v cygpath)" ]; then
     cygpath -w "$line" >> "$GITHUB_PATH"
+    echo "$line" >> "$GITHUB_PATH"
   else
     echo "$line" >> "$GITHUB_PATH"
   fi
